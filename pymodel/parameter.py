@@ -101,7 +101,11 @@ class Parameter(object):
     # Represenation
     # ADW: This should probably be __str__ not __repr__
     def __repr__(self):         
-        return "%s(%s, [%s, %s], %s)"%(self.__class__.__name__, self.value,self.bounds[0],self.bounds[1],self.free)
+        if self.bounds is None:
+            bounds = '[None, None]'
+        else:
+            bounds = '[%s, %s]'%(self.bounds[0],self.bounds[1])
+        return "%s(%s, %s, %s)"%(self.__class__.__name__, self.value,bounds,self.free)
 
     # Return the type of the inner value
     def innertype(self):  return type(self.__value__)
@@ -173,6 +177,8 @@ class Parameter(object):
         """
         tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
         return dumper.represent_mapping(tag,data.todict().items(),flow_style=True)
+
+Param = Parameter
 
 def odict_representer(dumper, data):
     """ http://stackoverflow.com/a/21912744/4075339 """

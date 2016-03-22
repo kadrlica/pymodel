@@ -9,5 +9,5 @@ from ._version import get_versions
 __version__ = get_versions()['version']
 del get_versions
 
-from .parameter import Parameter
+from .parameter import Parameter, Param
 from .model import Model

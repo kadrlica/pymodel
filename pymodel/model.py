@@ -23,16 +23,16 @@ def indent(string,width=0):
     return '{0:>{1}}{2}'.format('',width,string)
 
 class Model(object):
-    # The _params member is an ordered dictionary
-    # of Parameter objects.
-    _params = odict([])
-    # The _mapping is an alternative name mapping
+    # `_params` is a tuple of parameters
+    # _params = (('parameter name', 'default value', 'help description'),)
+    _params = ()
+    # `_mapping` is an alternative name mapping
     # for the parameters in _params
-    _mapping = odict([])
+    _mapping = ()
 
     def __init__(self,*args,**kwargs):
         self.name = self.__class__.__name__
-        self.params = copy.deepcopy(self._params)
+        self.params = self.defaults
         self.set_attributes(**kwargs)
         #pars = dict(**kwargs)
         #for name, value in pars.items():
@@ -54,7 +54,7 @@ class Model(object):
         #else:
         #    # Raises AttributeError
         #    return object.__getattribute__(self,name)
-        if name in self._params or name in self._mapping:
+        if name in self.defaults or name in self.mappings:
             return self.getp(name).value
         else:
             # Raises AttributeError
@@ -69,7 +69,7 @@ class Model(object):
         #    self.setp(name, value)
         #else:
         #    return object.__setattr__(self, name, value)
-        if name in self._params or name in self._mapping:
+        if name in self.defaults or name in self.mappings:
             self.setp(name, value)
         else:
             # Why is this a return statement
@@ -87,6 +87,17 @@ class Model(object):
                 ret += '\n{0:>{2}}{1}'.format('',par,indent+4)
         return ret
 
+    @property
+    def defaults(self):
+        """Ordered dictionary of default parameters."""
+        # Deep copy is necessary so that default parameters remain unchanged
+        return copy.deepcopy(odict([(p[0],p[1]) for p in self._params]))
+
+    @property
+    def mappings(self):
+        """Ordered dictionary of mapping."""
+        return odict(self._mapping)
+
     def getp(self, name):
         """ 
         Get the named parameter.
@@ -101,7 +112,7 @@ class Model(object):
         param : 
             The parameter object.
         """
-        name = self._mapping.get(name,name)
+        name = self.mappings.get(name,name)
         return self.params[name]
 
     def setp(self, name, value=None, bounds=None, free=None, errors=None):
@@ -120,7 +131,7 @@ class Model(object):
         -------
         None
         """
-        name = self._mapping.get(name,name)
+        name = self.mappings.get(name,name)
         self.params[name].set(value,bounds,free,errors)
         self._cache(name)
 
@@ -165,12 +176,7 @@ class Model(object):
         """
         pass
 
-    #@property
-    #def params(self):
-    #    return self._params
-
-
-
+        
 if __name__ == "__main__":
     import argparse
     description = "python script"
