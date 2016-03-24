@@ -1,2 +1,2 @@
 include versioneer.py
-include pymodel/_version.py
+include pymodeler/_version.py
