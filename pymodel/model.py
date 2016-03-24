@@ -31,7 +31,6 @@ class Model(object):
     _mapping = ()
 
     def __init__(self,*args,**kwargs):
-        self.name = self.__class__.__name__
         self.params = self.defaults
         self.set_attributes(**kwargs)
         #pars = dict(**kwargs)
@@ -97,6 +96,10 @@ class Model(object):
     def mappings(self):
         """Ordered dictionary of mapping."""
         return odict(self._mapping)
+
+    @property
+    def name(self):
+        return self.__class__.__name__
 
     def getp(self, name):
         """ 
