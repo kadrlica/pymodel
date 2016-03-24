@@ -13,7 +13,7 @@ def asscalar(a):
     #if   isinstance(value, (int, long, float)): return value
     try:
         return np.asscalar(a)
-    except AttributeError, e:
+    except AttributeError:
         return np.asscalar(np.asarray(a))
 
 
