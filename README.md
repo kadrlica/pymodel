@@ -1,4 +1,8 @@
+PyModeler
+---------
+
 [![PyPI version](https://img.shields.io/pypi/v/pymodeler.svg)](https://pypi.python.org/pypi/pymodeler)
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
 Description
 -----------
