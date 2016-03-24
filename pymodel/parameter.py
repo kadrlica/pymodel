@@ -98,6 +98,7 @@ class Parameter(object):
     def __index__(self):        return self.__value__.__index__()  
     def __trunc__(self):        return self.__value__.__trunc__()  
     def __coerce__(self, x):    return self.__value__.__coerce__(x)
+
     # Represenation
     # ADW: This should probably be __str__ not __repr__
     def __repr__(self):         
