@@ -2,8 +2,8 @@
 """
 Test the model build
 """
-from pymodel import Model
-from pymodel import Param
+from pymodeler import Model
+from pymodeler import Param
 
 class Parent(Model):
     _params = (
