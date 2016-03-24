@@ -9,6 +9,9 @@ except ImportError:
 
 import versioneer
 
+if sys.version_info[:2] < (2, 7):
+    raise RuntimeError("Python version >= 2.7 required.")
+
 NAME = 'pymodeler'
 CLASSIFIERS = """\
 Development Status :: 2 - Pre-Alpha

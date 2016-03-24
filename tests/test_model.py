@@ -27,15 +27,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     a = Parent()
-    print a
+    print(a)
 
     a.x = 3
     a.y = 4
-    print a
+    print(a)
 
     b = Child()
-    print b
+    print(b)
     for k,v in a.params.items():
         b.setp(k,v)
     b.z = 100
-    print b
+    print(b)
