@@ -31,7 +31,6 @@ setup(
     author_email='kadrlica@fnal.gov',
     scripts = [],
     install_requires=[
-        'python >= 2.7.0',
         'numpy >= 1.9.0',
         'pyyaml >= 3.10',
     ],
