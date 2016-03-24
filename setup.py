@@ -34,9 +34,6 @@ setup(
     install_requires=[
         'python >= 2.7.0',
         'numpy >= 1.9.0',
-        'scipy >= 0.14.0',
-        'healpy >= 1.6.0',
-        'emcee >= 2.1.0',
         'pyyaml >= 3.10',
     ],
     packages=find_packages(),
