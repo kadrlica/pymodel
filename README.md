@@ -11,18 +11,14 @@ The easiest way is using `pip`. To get the latest release
 # for the first install
 pip install pymodeler
 
-# if you only want to upgrade fitsio
+# update just pymodeler
 pip install pymodeler --no-deps --upgrade --ignore-installed
 
-# update fitsio (and all dependencies)
+# update pymodeler and all dependencies
 pip install pymodeler --upgrade
 ```
 
-You can also get the latest source tarball release from
-
-```https://pypi.python.org/pypi/pymodeler```
-
-or the bleeding edge source from github...
+You can also get the latest source tarball release from https://pypi.python.org/pypi/pymodeler or the bleeding edge source from github...
 
 ```
 git clone https://github.com/kadrlica/pymodeler.git
