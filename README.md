@@ -1,3 +1,5 @@
+[![PyPI version](https://img.shields.io/pypi/v/pymodeler.svg)](https://pypi.python.org/pypi/pymodeler)
+
 Description
 -----------
 
