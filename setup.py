@@ -9,7 +9,7 @@ except ImportError:
 
 import versioneer
 
-NAME = 'pymodel'
+NAME = 'pymodeler'
 HERE = os.path.abspath(os.path.dirname(__file__))
 CLASSIFIERS = """\
 Development Status :: 2 - Pre-Alpha
@@ -27,7 +27,7 @@ setup(
     name=NAME,
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    url='https://github.com/kadrlica/pymodel',
+    url='https://github.com/kadrlica/pymodeler',
     author='Alex Drlica-Wagner',
     author_email='kadrlica@fnal.gov',
     scripts = [],

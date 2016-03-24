@@ -17,7 +17,7 @@ import numpy as np
 import copy
 import yaml
 
-from pymodel.parameter import Parameter
+from pymodeler.parameter import Parameter
 
 def indent(string,width=0): 
     return '{0:>{1}}{2}'.format('',width,string)
