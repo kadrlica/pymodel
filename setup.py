@@ -10,7 +10,6 @@ except ImportError:
 import versioneer
 
 NAME = 'pymodeler'
-HERE = os.path.abspath(os.path.dirname(__file__))
 CLASSIFIERS = """\
 Development Status :: 2 - Pre-Alpha
 Intended Audience :: Science/Research
@@ -19,15 +18,15 @@ Programming Language :: Python
 Natural Language :: English
 Topic :: Scientific/Engineering
 """
-
-def read(filename):
-    return open(os.path.join(HERE,filename)).read()
+URL = 'https://github.com/kadrlica/pymodeler'
+DESCR = "Infrastructure for creating parametrized models in python."
+LONG_DESCR = "See %s for more details."
 
 setup(
     name=NAME,
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    url='https://github.com/kadrlica/pymodeler',
+    url=URL,
     author='Alex Drlica-Wagner',
     author_email='kadrlica@fnal.gov',
     scripts = [],
@@ -38,8 +37,8 @@ setup(
     ],
     packages=find_packages(),
     package_data={},
-    description="Infrastructure for creating parametrized models in python.",
-    long_description=read('README.md'),
+    description=DESCR,
+    long_description=LONG_DESCR,
     platforms='any',
     classifiers = [_f for _f in CLASSIFIERS.split('\n') if _f]
 )
