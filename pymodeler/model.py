@@ -25,50 +25,29 @@ def indent(string,width=0):
 class Model(object):
     # `_params` is a tuple of parameters
     # _params = (('parameter name', 'default value', 'help description'),)
-    _params = ()
+    _params = odict([])
     # `_mapping` is an alternative name mapping
     # for the parameters in _params
-    _mapping = ()
+    _mapping = odict([])
 
     def __init__(self,*args,**kwargs):
         self.params = self.defaults
         self.set_attributes(**kwargs)
-        #pars = dict(**kwargs)
-        #for name, value in pars.items():
-        #    # Raise AttributeError if attribute not found
-        #    self.__getattr__(name) 
-        #    # Set attribute
-        #    self.__setattr__(name,value)
         
         # In case no properties were set, cache anyway
         self._cache()
 
     def __getattr__(self,name):
-        # Return 'value' of parameters
-        # __getattr__ tries the usual places first.
-        #if name in self._mapping:
-        #    return self.__getattr__(self._mapping[name])
-        #if name in self._params:
-        #    return self.getp(name).value
-        #else:
-        #    # Raises AttributeError
-        #    return object.__getattribute__(self,name)
-        if name in self.defaults or name in self.mappings:
+        # Return 'getp' of parameter
+        if name in self._params or name in self._mapping:
             return self.getp(name).value
         else:
             # Raises AttributeError
             return object.__getattribute__(self,name)
 
     def __setattr__(self, name, value):
-        ## Call 'set_value' on parameters
-        ## __setattr__ tries the usual places first.
-        #if name in self._mapping.keys():
-        #    return self.__setattr__(self._mapping[name],value)
-        #if name in self._params:
-        #    self.setp(name, value)
-        #else:
-        #    return object.__setattr__(self, name, value)
-        if name in self.defaults or name in self.mappings:
+        # Call 'setp' on parameter
+        if name in self._params or name in self._mapping:
             self.setp(name, value)
         else:
             # Why is this a return statement
@@ -90,12 +69,12 @@ class Model(object):
     def defaults(self):
         """Ordered dictionary of default parameters."""
         # Deep copy is necessary so that default parameters remain unchanged
-        return copy.deepcopy(odict([(p[0],p[1]) for p in self._params]))
+        return copy.deepcopy(self._params)
 
     @property
     def mappings(self):
         """Ordered dictionary of mapping."""
-        return odict(self._mapping)
+        return copy.deepcopy(self._mapping)
 
     @property
     def name(self):
@@ -115,7 +94,7 @@ class Model(object):
         param : 
             The parameter object.
         """
-        name = self.mappings.get(name,name)
+        name = self._mapping.get(name,name)
         return self.params[name]
 
     def setp(self, name, value=None, bounds=None, free=None, errors=None):
@@ -134,7 +113,7 @@ class Model(object):
         -------
         None
         """
-        name = self.mappings.get(name,name)
+        name = self._mapping.get(name,name)
         self.params[name].set(value,bounds,free,errors)
         self._cache(name)
 
