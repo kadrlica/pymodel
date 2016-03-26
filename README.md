@@ -2,9 +2,9 @@ PyModeler
 ---------
 
 [![Travis](https://img.shields.io/travis/kadrlica/pymodeler.svg)](https://travis-ci.org/kadrlica/pymodeler)
-[![GitHub release](https://img.shields.io/github/release/kadrlica/pymodeler.svg)](https://github.com/kadrlica/pymodeler/releases)
+[![GitHub tag](https://img.shields.io/github/tag/kadrlica/pymodeler.svg)](https://github.com/kadrlica/pymodeler/releases)
 [![PyPI version](https://img.shields.io/pypi/v/pymodeler.svg)](https://pypi.python.org/pypi/pymodeler)
-[![GitHub license](https://img.shields.io/github/license/kadrlica/pymodeler.svg)](https://github.com/kadrlica/pymodeler)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kadrlica/pymodeler)
 
 Description
 -----------
