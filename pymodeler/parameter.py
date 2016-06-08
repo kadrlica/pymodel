@@ -8,18 +8,203 @@ import numpy as np
 import yaml
 
 def asscalar(a):
-    """ https://github.com/numpy/numpy/issues/4701 """
-    # Do we want to check that the value is numeric?
-    #if   isinstance(value, (int, long, float)): return value
+    """ Convert single-item lists and numpy arrays to scalars 
+
+    https://github.com/numpy/numpy/issues/4701 """
+    # First check for numeric values
+    if isinstance(a, (int, long, float)): 
+        return a
     try:
         return np.asscalar(a)
     except AttributeError:
         return np.asscalar(np.asarray(a))
 
 
-class Parameter(object):
+
+class Property(object):
+    """ Base class for model properties.  
+
+    This class and its sub-classes implement variations
+    on the concept of a 'mutable' value or 'l-value', 
+    i.e., an object that can be assigned a value.
+
+    This class defines some interfaces that help 
+    read or write heirachical sets of properties to and 
+    from various formats ( python dictionaries, yaml files, astropy tables, etc..)
+
+    The pymodoler.model.Model class acts as mapping 
+    from names to Property instances.
+
+    This base class implements some built-in attributes:
+    
+       Property.value      The current value 
+       Property.help       A description of the property
+       Property.format     Format string for printing [defaults to '%s'
+       Property.dtype      If not None, value must match this type
+       Property.required   It true, this property must be set when initializing a model.
+       
     """
-    Parameter class for storing a value, bounds, and freedom.
+    __value__ = None
+
+    defaults = [
+        ('value',__value__,     'Property value'               ),
+        ('help',        "",     'Help description'             ),
+        ('format',    '%s',     'Format string for printing'   ),
+        ('dtype',     None,     'Data type'                    ),
+        ('default',   None,     'Default value'                ),
+        ('required', False,     'Is this propery required?'    )]
+
+    def __init__(self, **kwargs):
+        """ C'tor for kwargs
+        """
+        self._load(**kwargs)
+        if self.__value__ is None and self.default is not None:
+            self.set_value(self.default)       
+
+    def _load(self, **kwargs):
+        """ Load kwargs key,value pairs into __dict__
+        """
+        kw = dict([(d[0],d[1]) for d in self.defaults])
+        kw.update(kwargs)
+        self.__dict__.update(kw)
+
+    @property
+    def value(self):
+        """ Return the current value
+
+        This may be modified by sub-classes to do additional 
+        operations (such as caching the results of 
+        complicated operations needed to compute the value)
+        """
+        return self.__value__
+ 
+    def innertype(self):  
+        """ Return the type of the current value
+        """
+        return type(self.__value__)
+        
+    def __call__(self):
+        """ __call__ will return the current value
+
+        By default this invokes self.value
+        so, any additional functionality that sub-classes implement,
+        (such as caching the results of 
+        complicated operations needed to compute the value)
+        will also be invoked        
+        """
+        return self.value
+
+    def set(self, **kwargs):
+        """ Set the value to kwargs['value']
+        
+        The invokes hooks for type-checking and bounds-checking that
+        may be implemented by sub-classes.        
+        """
+        self.set_value(kwargs.pop('value',None))
+
+    def set_value(self, value):
+        """ Set the value 
+        
+        This invokes hooks for type-checking and bounds-checking that
+        may be implemented by sub-classes.               
+        """
+        self.check_bounds(value)
+        self.check_type(value)
+        self.__value__ = value
+
+    def clear_value(self):
+        """ Set the value to None
+
+        This can be useful for sub-classes that use None
+        to indicate an un-initialized value. 
+
+        Note that this invokes hooks for type-checking and bounds-checking that
+        may be implemented by sub-classes, so it should will
+        need to be re-implemented if those checks do note accept None as 
+        a valid value.
+        """ 
+        self.set_value(None)
+        
+    def todict(self):
+        """ Convert to a '~collections.OrderedDict' object.
+
+        By default this only assigns {'value':self.value}
+        """
+        return odict(value=self.value)
+
+    def dump(self):
+        """ Dump this object as a yaml string
+        """
+        return yaml.dump(self)
+    
+    def check_bounds(self,value):
+        """ Hook for bounds-checking, invoked during assignment.
+
+        Sub-classes can raise an exception for out-of-bounds input values.
+        """
+        pass
+
+    def check_type(self,value):
+        """ Hook for type-checking, invoked during assignment.
+
+        raises TypeError if neither value nor self.dtype are None and they 
+        do not match.
+        
+        will not raise an exception if either value or self.dtype is None      
+        """   
+        if self.dtype is None:
+            return
+        elif value is None:
+            return
+        elif isinstance(value,self.dtype):
+            return
+        raise TypeError("Value of type %s, when %s was expected."%(type(value),self.dtype))
+
+
+
+
+class Derived(Property):
+    """ Property sub-class for derived model properties.  I.e., properties that depend on other 
+    Properties
+
+    This allow specifying the expected data type and formatting string for printing, and specifying
+    a 'loader' function by name that is used to compute the value of the property.
+    
+    """        
+
+    defaults = Property.defaults + [('loader',    None,     'Function to load datum'       )]
+    
+    def __init__(self, **kwargs):
+        """
+        """
+        super(Derived,self).__init__(**kwargs)
+
+    @property
+    def value(self):
+        """ Return the current value
+
+        This first check if the value is cached (i.e., self.__value__ is not None)
+        
+        If it is not cachec then it invokes the loader function
+        to compute the value, and caches the computed value
+        """
+
+        if self.__value__ is None:
+            val = self.loader()
+            try:
+                self.set_value(val)
+            except:
+                raise TypeError("Loader for %s must return variable of type %s or None"%(self.name,self.dtype))
+        return self.__value__
+            
+
+
+
+class Parameter(Property):
+    """
+    Property sub-class for defining a numerical Parameter.
+
+    This includes value, bounds, error estimates and fixed/free status (i.e., for fitting)
 
     Adapted from MutableNum from https://gist.github.com/jheiv/6656349
     """
@@ -28,8 +213,15 @@ class Parameter(object):
     __free__ = False
     __errors__ = None
 
-    def __init__(self, value, bounds=None, free=None, errors=None): 
-        self.set(value,bounds,free,errors)
+    def __init__(self, **kwargs):
+        super(Parameter,self).__init__(**kwargs)
+
+    def check_type(self,value):
+        """ Hook for type-checking, invoked during assignment.
+
+        raises TypeError if value can not be cast using np.asscalar() function
+        """
+        vv = asscalar(value)
 
     # Comparison Methods
     def __eq__(self, x):        return self.__value__ == x
@@ -108,23 +300,28 @@ class Parameter(object):
             bounds = '[%s, %s]'%(self.bounds[0],self.bounds[1])
         return "%s(%s, %s, %s)"%(self.__class__.__name__, self.value,bounds,self.free)
 
-    # Return the type of the inner value
-    def innertype(self):  return type(self.__value__)
 
     @property
     def bounds(self):
+        """ Return the parameter bounds.  
+
+        None implies unbounded.        
+        """
         return self.__bounds__
 
     @property
-    def value(self):
-        return self.__value__
-
-    @property
     def free(self):
+        """ Return the fixd/free status """
         return self.__free__
 
     @property
     def errors(self):
+        """ Return the parameter uncertainties.
+
+        None implies no error estimate.
+        Single value implies symmetric errors.
+        Two values implies low,high asymmetric errors.
+        """
         return self.__errors__
 
     def item(self): 
@@ -132,6 +329,11 @@ class Parameter(object):
         return self.value
 
     def check_bounds(self, value):
+        """ Hook for bounds-checking, invoked during assignment.
+        
+        raises ValueError if value is outside of bounds.
+        does nothing if bounds is set to None.
+        """
         if self.__bounds__ is None:
             return
         if not (self.__bounds__[0] <= value <= self.__bounds__[1]):
@@ -140,34 +342,54 @@ class Parameter(object):
             raise ValueError(msg)
 
     def set_bounds(self, bounds):
-        if bounds is None: return
+        """ Set bounds """
+        if bounds is None:
+            self.__bounds__ = None
+            return        
         self.__bounds__ = [asscalar(b) for b in bounds]
 
-    def set_value(self, value):
-        if value is None: return
-        self.check_bounds(value)
-        self.__value__ = asscalar(value)
-
     def set_free(self, free):
-        if free is None: return
-        else: self.__free__ = bool(free)
+        """ Set free/fixed status """
+        if free is None: 
+            self.__free__ = False
+            return
+        self.__free__ = bool(free)
 
     def set_errors(self, errors):
-        if errors is None: return
+        """ Set parameter error estimate """
+        if errors is None: 
+            self.__errors__ = None
+            return
         self.__errors__ = [asscalar(e) for e in errors]
 
-    def set(self, value=None, bounds=None, free=None, errors=None):
+    def set(self, **kwargs):
+        """ Set the value,bounds,free,errors based on corresponding kwargs
+        
+        The invokes hooks for type-checking and bounds-checking that
+        may be implemented by sub-classes.   
+        """
         # Probably want to reset bounds if set fails
-        self.set_bounds(bounds)
-        self.set_value(value)
-        self.set_free(free)
-        self.set_errors(errors)
+        if kwargs.has_key('bounds'):
+            self.set_bounds(kwargs.pop('bounds'))
+        if kwargs.has_key('value'):
+            self.set_value(kwargs.pop('value'))
+        if kwargs.has_key('free'):
+            self.set_free(kwargs.pop('free'))
+        if kwargs.has_key('errors'):
+            self.set_errors(kwargs.pop('errors'))
 
     def todict(self):
+        """ Convert to a '~collections.OrderedDict' object.
+
+        This assigns {'value':self.value,'bounds'=self.bounds,
+                      'free'=self.free,'errors'=self.errors}
+        """
         return odict(value=self.value,bounds=self.bounds,
                      free=self.free,errors=self.errors)
 
     def dump(self):
+        """ Dump this object as a yaml string
+        """
         return yaml.dump(self)
 
     @staticmethod
