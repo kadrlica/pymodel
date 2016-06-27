@@ -54,7 +54,10 @@ class Model(object):
             return object.__setattr__(self, name, value)
 
     def __str__(self,indent=0):
-        ret = '{0:>{2}}{1}'.format('',self.name,indent)
+        try:
+            ret = '{0:>{2}}{1}'.format('',self.name,indent)
+        except:
+            ret = "%s"%(type(self))
         if len(self.params)==0:
             pass
         else:            
@@ -136,9 +139,11 @@ class Model(object):
             # Set attributes
             try: self.setp(name,clear_derived=False,**value)
             except TypeError:
-                try:  self.setp(name,clear_derived=False,*value)
+                try: self.setp(name,clear_derived=False,*value)
                 except (TypeError,KeyError):  
-                    self.__setattr__(name,value)
+                    try: self.setp(name,clear_derived=False,value=value)
+                    except (TypeError,KeyError):  
+                        self.__setattr__(name,value)
             # pop this attribued off the list of missing properties
             self._missing.pop(name,None)
         # Check to make sure we got all the required properties
@@ -203,11 +208,12 @@ class Model(object):
 
 
 
-
         
 if __name__ == "__main__":
+
     import argparse
     description = "python script"
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('args',nargs=argparse.REMAINDER)
     opts = parser.parse_args(); args = opts.args
+
