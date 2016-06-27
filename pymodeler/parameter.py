@@ -100,7 +100,8 @@ class Property(object):
         The invokes hooks for type-checking and bounds-checking that
         may be implemented by sub-classes.        
         """
-        self.set_value(kwargs.pop('value',None))
+        if kwargs.has_key('value'):
+            self.set_value(kwargs.pop('value',None))
 
     def set_value(self, value):
         """ Set the value 
@@ -298,7 +299,12 @@ class Parameter(Property):
             bounds = '[None, None]'
         else:
             bounds = '[%s, %s]'%(self.bounds[0],self.bounds[1])
-        return "%s(%s, %s, %s)"%(self.__class__.__name__, self.value,bounds,self.free)
+        if self.errors is None:
+            errors = '[None, None]'
+        else:
+            errors = '[%s, %s]'%(self.errors[0],self.errors[1])
+        
+        return "%s(%s, %s, %s, %s)"%(self.__class__.__name__, self.value,bounds,errors,self.free)
 
 
     @property
@@ -323,6 +329,21 @@ class Parameter(Property):
         Two values implies low,high asymmetric errors.
         """
         return self.__errors__
+
+    @property
+    def symmetric_error(self):
+        """ Return the symmertic error 
+
+        Similar to above, but zero implies no error estimate,
+        and otherwise this will either be the symmetric error, 
+        or the average of the low,high asymmetric errors.
+        """
+        if self.__errors__ is None:
+            return 0.
+        if np.isscalar(self.__errors__):
+            return self.__errors__
+        return 0.5*(self.__errors__[0] + self.__errors__[1])
+
 
     def item(self): 
         """ For asscalar """
