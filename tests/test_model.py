@@ -13,21 +13,14 @@ class Parent(Model):
 class Child(Parent):
     _params = Parent._params 
     _params.update(odict([('z', Param(value=None            , help='variable z'))]))
-    _mapping = (
-        ('zed','z'),
-    )
+    _mapping = odict([('zed','z')])
 
 class test_class(Model):
     _params = odict([('req', Property(dtype=float,format='%.1f',required=True,help="A required parameter")),
                      ('opt', Property(dtype=float,format='%.1f',default=1.0,help="An optional parameter")),
-                     ('var', Param(value=1.0,help="A variable parameter")),
+                     ('var', Param(default=1.0,help="A variable parameter")),
                      ('der', Derived(dtype=float,format='%.1f',help="A derived parameter"))])            
-    
-    def __init__(self, **kwargs):
-        """
-        """
-        super(test_class,self).__init__(**kwargs)   
-            
+                
     def _der(self):
         return self.req * self.opt * self.var
  
