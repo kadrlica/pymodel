@@ -245,7 +245,7 @@ class Model(object):
             except (AttributeError):
                 try: self.getp(name)
                 except:
-                    print "Warning: %s does not have attribute %s"%(type(self),name)                
+                    print ("Warning: %s does not have attribute %s"%(type(self),name))
             # Set attributes
             try: self.setp(name,clear_derived=False,**value)
             except TypeError:
