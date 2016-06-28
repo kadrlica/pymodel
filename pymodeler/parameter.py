@@ -41,6 +41,7 @@ class Property(object):
        Property.help       A description of the property
        Property.format     Format string for printing [defaults to '%s'
        Property.dtype      If not None, value must match this type
+       Property.default    Default value for this property
        Property.required   It true, this property must be set when initializing a model.
        
     """
@@ -60,7 +61,13 @@ class Property(object):
         self._load(**kwargs)
         if self.__value__ is None and self.default is not None:
             self.set_value(self.default)       
+ 
+    def __str__(self):          
+        return self.__value__.__str__()    
 
+    def __repr__(self):
+        return self.__value__.__str__()    
+ 
     def _load(self, **kwargs):
         """ Load kwargs key,value pairs into __dict__
         """
@@ -286,7 +293,7 @@ class Parameter(Property):
     # Conversions
     def __oct__(self):          return self.__value__.__oct__()    
     def __hex__(self):          return self.__value__.__hex__()    
-    def __str__(self):          return self.__value__.__str__()    
+
     # Random Ops
     def __index__(self):        return self.__value__.__index__()  
     def __trunc__(self):        return self.__value__.__trunc__()  
