@@ -12,8 +12,14 @@ def asscalar(a):
 
     https://github.com/numpy/numpy/issues/4701 """
     # First check for numeric values
-    if isinstance(a, (int, long, float)): 
-        return a
+    if isinstance(a, (int, float)): 
+        return a    
+    # Long == int in python 3.  
+    # FIXME, find a better way of dealing with this
+    try:
+        isinstance(a, (long))
+    except NameError:
+        pass        
     try:
         return np.asscalar(a)
     except AttributeError:
