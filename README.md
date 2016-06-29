@@ -1,10 +1,10 @@
 PyModeler
 ---------
 
-[![Travis](https://img.shields.io/travis/kadrlica/pymodeler.svg)](https://travis-ci.org/kadrlica/pymodeler)
-[![GitHub tag](https://img.shields.io/github/tag/kadrlica/pymodeler.svg)](https://github.com/kadrlica/pymodeler/releases)
-[![PyPI version](https://img.shields.io/pypi/v/pymodeler.svg)](https://pypi.python.org/pypi/pymodeler)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kadrlica/pymodeler)
+[![Build](https://img.shields.io/travis/kadrlica/pymodeler.svg)](https://travis-ci.org/kadrlica/pymodeler)
+[![Release](https://img.shields.io/github/release/kadrlica/pymodeler.svg)](../../releases)
+[![PyPI](https://img.shields.io/pypi/v/pymodeler.svg)](https://pypi.python.org/pypi/pymodeler)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kadrlica/pymodeler)
 
 Description
 -----------
@@ -26,7 +26,7 @@ pip install pymodeler --no-deps --upgrade --ignore-installed
 pip install pymodeler --upgrade
 ```
 
-You can also get the latest source tarball release from https://pypi.python.org/pypi/pymodeler or the bleeding edge source from github...
+You can also get the latest release or version of the soure code from github...
 
 ```
 git clone https://github.com/kadrlica/pymodeler.git

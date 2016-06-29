@@ -23,7 +23,7 @@ Topic :: Scientific/Engineering
 """
 URL = 'https://github.com/kadrlica/pymodeler'
 DESCR = "Infrastructure for creating parametrized models in python."
-LONG_DESCR = "See %s for more details."
+LONG_DESCR = "See %s for more details."%URL
 
 setup(
     name=NAME,
