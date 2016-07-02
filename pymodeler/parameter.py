@@ -123,7 +123,7 @@ class Property(object):
         The invokes hooks for type-checking and bounds-checking that
         may be implemented by sub-classes.        
         """
-        if kwargs.has_key('value'):
+        if 'value' in kwargs:
             self.set_value(kwargs.pop('value',None))
 
     def set_value(self, value):
@@ -423,13 +423,13 @@ class Parameter(Property):
         may be implemented by sub-classes.   
         """
         # Probably want to reset bounds if set fails
-        if kwargs.has_key('bounds'):
+        if 'bounds' in kwargs:
             self.set_bounds(kwargs.pop('bounds'))
-        if kwargs.has_key('free'):
+        if 'free' in kwargs:
             self.set_free(kwargs.pop('free'))
-        if kwargs.has_key('errors'):
+        if 'errors' in kwargs:
             self.set_errors(kwargs.pop('errors'))
-        if kwargs.has_key('value'):
+        if 'value' in kwargs:
             self.set_value(kwargs.pop('value'))
 
     def todict(self):
