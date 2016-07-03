@@ -77,9 +77,19 @@ class Property(object):
     def _load(self, **kwargs):
         """ Load kwargs key,value pairs into __dict__
         """
-        kw = dict([(d[0],d[1]) for d in self.defaults])
-        kw.update(kwargs)
-        self.__dict__.update(kw)
+        defaults = dict([(d[0],d[1]) for d in self.defaults])
+        # Require kwargs to be in defaults
+        for k in kwargs:
+            if k not in defaults:
+                msg = "Unrecognized attribute of %s: %s"%(self.__class__.__name__,k)
+                raise AttributeError(msg)
+        defaults.update(kwargs)
+
+        # This doesn't overwrite the properties
+        self.__dict__.update(defaults)
+         
+        # This sets the underlying property values (i.e., __value__)
+        self.set(**defaults)
 
     @property
     def value(self):
@@ -113,7 +123,7 @@ class Property(object):
         The invokes hooks for type-checking and bounds-checking that
         may be implemented by sub-classes.        
         """
-        if kwargs.has_key('value'):
+        if 'value' in kwargs:
             self.set_value(kwargs.pop('value',None))
 
     def set_value(self, value):
@@ -186,7 +196,9 @@ class Derived(Property):
     
     """        
 
-    defaults = Property.defaults + [('loader',    None,     'Function to load datum'       )]
+    defaults = Property.defaults + [
+        ('loader',   lambda: None,     'Function to load datum'       )
+    ]
     
     def __init__(self, **kwargs):
         """
@@ -226,6 +238,14 @@ class Parameter(Property):
     __bounds__ = None
     __free__ = False
     __errors__ = None
+
+    # Better to keep the structure consistent with Property
+    defaults = Property.defaults + [
+        ('bounds',  __bounds__,     'Allowed bounds for value'       ),
+        ('errors',  __errors__,     'Errors on this parameter'       ),
+        ('free',      __free__,     'Is this propery allowed to vary'),
+    ]
+ 
 
     def __init__(self, **kwargs):
         super(Parameter,self).__init__(**kwargs)
@@ -403,14 +423,14 @@ class Parameter(Property):
         may be implemented by sub-classes.   
         """
         # Probably want to reset bounds if set fails
-        if kwargs.has_key('bounds'):
+        if 'bounds' in kwargs:
             self.set_bounds(kwargs.pop('bounds'))
-        if kwargs.has_key('value'):
-            self.set_value(kwargs.pop('value'))
-        if kwargs.has_key('free'):
+        if 'free' in kwargs:
             self.set_free(kwargs.pop('free'))
-        if kwargs.has_key('errors'):
+        if 'errors' in kwargs:
             self.set_errors(kwargs.pop('errors'))
+        if 'value' in kwargs:
+            self.set_value(kwargs.pop('value'))
 
     def todict(self):
         """ Convert to a '~collections.OrderedDict' object.
