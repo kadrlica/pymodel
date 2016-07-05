@@ -96,6 +96,7 @@ class Property(object):
         ('format',    '%s',     'Format string for printing'   ),
         ('dtype',     None,     'Data type'                    ),
         ('default',   None,     'Default value'                ),
+        ('unit',      None,     'Units associated property'    ),
         ('required', False,     'Is this propery required?'    )]
 
     @defaults_decorator(defaults)
