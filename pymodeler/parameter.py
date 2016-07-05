@@ -10,6 +10,10 @@ from collections import OrderedDict as odict
 import numpy as np
 import yaml
 
+# Python 3 compatibility 
+try: basestring
+except NameError: basestring = str
+
 def asscalar(a):
     """ Convert single-item lists and numpy arrays to scalars. Does
     not care about the type of the elements (i.e., will work fine on
@@ -96,8 +100,9 @@ class Property(object):
         ('format',    '%s',     'Format string for printing'   ),
         ('dtype',     None,     'Data type'                    ),
         ('default',   None,     'Default value'                ),
-        ('unit',      None,     'Units associated property'    ),
-        ('required', False,     'Is this propery required?'    )]
+        ('required', False,     'Is this propery required?'    ),
+        ('unit',      None,     'Units associated to value'    ),
+    ]
 
     @defaults_decorator(defaults)
     def __init__(self, **kwargs):

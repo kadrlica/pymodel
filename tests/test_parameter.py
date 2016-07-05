@@ -58,7 +58,12 @@ def test_derived():
 
     # Allow a derived property without a loader?
     deriv = Derived()
-    assert deriv.value is None
+    assert deriv.loader is None
+
+    try: deriv.value
+    except TypeError: pass
+    else: raise AssertionError()
+
 
 def test_parameter():
     # Simple parameter
@@ -72,11 +77,13 @@ def test_parameter():
     # But this shouldn't be...
     param = Parameter(value=10,dtype=int)
     try: param.set_value(1.0)
-    except TypeError: pass
-    else: raise AssertionError
+    except TypeError as e: pass
+    else: raise AssertionError("Only integer types should be allowed")
 
     # We only allow numeric types by default
-    param.set_value('hello')
+    try: param.set_value('hello')
+    except TypeError: pass
+    else: raise AssertionError("Only numeric types should be allowed")
 
     param = Parameter(value=1,bounds=[1,10],errors=[0.5,0.5],dtype=int)
 
