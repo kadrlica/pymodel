@@ -59,6 +59,7 @@ class Property(object):
         ('format',    '%s',     'Format string for printing'   ),
         ('dtype',     None,     'Data type'                    ),
         ('default',   None,     'Default value'                ),
+        ('unit',      None,     'Units for this property'      ),
         ('required', False,     'Is this propery required?'    )]
 
     def __init__(self, **kwargs):
@@ -198,6 +199,7 @@ class Derived(Property):
 
     defaults = Property.defaults + [
         ('loader',   lambda: None,     'Function to load datum'       )
+#        ('loader',   None,     'Function to load datum'       )
     ]
     
     def __init__(self, **kwargs):
