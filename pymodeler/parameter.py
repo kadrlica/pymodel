@@ -241,7 +241,7 @@ class Derived(Property):
     """        
 
     defaults = deepcopy(Property.defaults) + [
-        ('loader', lambda: None,     'Function to load datum'       )
+        ('loader', None,     'Function to load datum'       )
     ]
     
     @defaults_decorator(defaults)
@@ -261,7 +261,11 @@ class Derived(Property):
         """
 
         if self.__value__ is None:
-            val = self.loader()
+            try: 
+                val = self.loader()
+            except TypeError:
+                msg = "Loader is not defined"
+                raise TypeError(msg)
             try:
                 self.set_value(val)
             except TypeError:
