@@ -7,29 +7,42 @@ from pymodeler import Parameter, Param, Property, Derived
 from collections import OrderedDict as odict
 
 def test_property():
-    int_prop = Property(default=10,dtype=int,
-                        help="I'm an int property")
+    int_prop = Property(default=10,dtype=int,help="I'm an `int` property")
     int_prop.set_value(3)
 
-    # Shouldn't be able to set to a different type
+    # We shouldn't be able to set to a different type
     try: int_prop.set_value(3.2)
-    except TypeError as e: pass
-    else: raise Exception()
+    except TypeError: pass
+    else: raise TypeError
         
-    float_prop = Property(value=1.3e6,
-                          help="I'm a float parameter")
+    float_prop = Property(value=1.3e6, help="I'm a float parameter")
     float_prop.set(value=0)
     float_prop.clear_value()
     assert float_prop.value is None
 
-    str_prop = Property(value='hello',default='world',
-                        help="I'm a str property")
-
+    str_prop = Property(value='hello',default='world',help="a `str` property")
     assert str_prop.value == 'hello'
     assert str_prop.innertype() is str
 
+    # A more complex property
+    dict_prop = Property(value={'x':3},default={'y':2}, dtype=dict,
+                        required=True, help="a dict property")
+
+    assert dict_prop.required == True
+    try: dict_prop.set(value=[1,3])
+    except TypeError: pass
+    else: raise TypeError
+
+    # This should be ok
+    Property(value={'x':3},default=['y',2])
+
+    # but this should fail...
+    try: Property(value={'x':3},default=['y',2], dtype=dict)
+    except TypeError: pass
+    else: raise TypeError
+
 def test_derived():
-    prop = Property(value='hello',help="Base propert")
+    prop = Property(value='hello',help="Base property")
     loader = lambda: 'world'
 
     # This property has nothing set
@@ -56,19 +69,19 @@ def test_parameter():
     param.set_value(100.)
     assert param.value == 100.
 
-    # We currently allow any type
-    param.set_value(1.0)
+    # But this shouldn't be...
+    param = Parameter(value=10,dtype=int)
+    try: param.set_value(1.0)
+    except TypeError: pass
+    else: raise AssertionError
 
-    # We currently allow any type (this should probably fail)
+    # We only allow numeric types by default
     param.set_value('hello')
 
     param = Parameter(value=1,bounds=[1,10],errors=[0.5,0.5],dtype=int)
 
     print(param)
     print(repr(param))
-
-    # We currently allow any type (this should probably fail)
-    #param.set_value('hello')
 
 
 if __name__ == "__main__":
