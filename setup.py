@@ -9,8 +9,8 @@ except ImportError:
 
 import versioneer
 
-if sys.version_info[:2] < (2, 7):
-    raise RuntimeError("Python version >= 2.7 required.")
+if sys.version_info[:2] < (2, 7) or (3, 0) <= sys.version_info[:2] < (3, 2):
+    raise RuntimeError("Python version 2.7 or >= 3.2 required.")
 
 NAME = 'pymodeler'
 CLASSIFIERS = """\
@@ -18,6 +18,10 @@ Development Status :: 2 - Pre-Alpha
 Intended Audience :: Science/Research
 Intended Audience :: Developers
 Programming Language :: Python
+Programming Language :: Python :: 2
+Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3
+Programming Language :: Python :: 3.4
 Natural Language :: English
 Topic :: Scientific/Engineering
 """
