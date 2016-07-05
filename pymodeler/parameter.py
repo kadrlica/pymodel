@@ -96,7 +96,9 @@ class Property(object):
         ('format',    '%s',     'Format string for printing'   ),
         ('dtype',     None,     'Data type'                    ),
         ('default',   None,     'Default value'                ),
-        ('required', False,     'Is this propery required?'    )]
+        ('required', False,     'Is this propery required?'    ),
+        ('unit',      None,     'Units associated to value'    ),
+    ]
 
     @defaults_decorator(defaults)
     def __init__(self, **kwargs):
