@@ -3,31 +3,25 @@
 Parameter class
 """
 
-import copy
-import types 
-import textwrap
-
+from copy import deepcopy
+from numbers import Number
 from collections import OrderedDict as odict
+
 import numpy as np
 import yaml
 
 def asscalar(a):
-    """ Convert single-item lists and numpy arrays to scalars 
+    """ Convert single-item lists and numpy arrays to scalars. Does
+    not care about the type of the elements (i.e., will work fine on
+    strings, etc.)
 
-    https://github.com/numpy/numpy/issues/4701 """
-    # First check for numeric values
-    if isinstance(a, (int, float)): 
-        return a    
-    # Long == int in python 3.  
-    # FIXME, find a better way of dealing with this
-    try:
-        isinstance(a, (long))
-    except NameError:
-        pass        
-    try:
-        return np.asscalar(a)
+    https://github.com/numpy/numpy/issues/4701 
+    https://github.com/numpy/numpy/pull/5126
+    """
+    try: 
+        return a.item()
     except AttributeError:
-        return np.asscalar(np.asarray(a))
+        return np.asarray(a).item()
 
 def defaults_docstring(defaults,header=None,indent=None):
     """ Return a docstring from a list of defaults.
@@ -129,6 +123,9 @@ class Property(object):
 
         # This doesn't overwrite the properties
         self.__dict__.update(defaults)
+
+        # This should now be set
+        self.check_type(self.default)
          
         # This sets the underlying property values (i.e., __value__)
         self.set(**defaults)
@@ -229,7 +226,8 @@ class Property(object):
             return
         elif isinstance(value,self.dtype):
             return
-        raise TypeError("Value of type %s, when %s was expected."%(type(value),self.dtype))
+        msg = "Value of type %s, when %s was expected."%(type(value),self.dtype)
+        raise TypeError(msg)
 
 
 class Derived(Property):
@@ -242,7 +240,7 @@ class Derived(Property):
 
     """        
 
-    defaults = Property.defaults + [
+    defaults = deepcopy(Property.defaults) + [
         ('loader', lambda: None,     'Function to load datum'       )
     ]
     
@@ -266,8 +264,9 @@ class Derived(Property):
             val = self.loader()
             try:
                 self.set_value(val)
-            except:
-                raise TypeError("Loader for %s must return variable of type %s or None"%(self.name,self.dtype))
+            except TypeError:
+                msg = "Loader must return variable of type %s or None"%(self.dtype)
+                raise TypeError(msg)
         return self.__value__
             
 
@@ -279,7 +278,7 @@ class Parameter(Property):
     This includes value, bounds, error estimates and fixed/free status
     (i.e., for fitting)
 
-    Adapted from MutableNum from https://gist.github.com/jheiv/6656349
+    Adapted from MutableNum: https://gist.github.com/jheiv/6656349
 
     """
 
@@ -289,22 +288,32 @@ class Parameter(Property):
     __errors__ = None
 
     # Better to keep the structure consistent with Property
-    defaults = Property.defaults + [
+    defaults = deepcopy(Property.defaults) + [
         ('bounds',  __bounds__,     'Allowed bounds for value'        ),
         ('errors',  __errors__,     'Errors on this parameter'        ),
         ('free',      __free__,     'Is this propery allowed to vary?'),
     ]
+    # Overwrite the default dtype
+    idx = [d[0] for d in defaults].index('dtype')
+    defaults[idx] = ('dtype',     Number,     'Data type')
+
 
     @defaults_decorator(defaults)
     def __init__(self, **kwargs):
         super(Parameter,self).__init__(**kwargs)
 
     def check_type(self,value):
-        """ Hook for type-checking, invoked during assignment.
+        """Hook for type-checking, invoked during assignment. Allows size 1
+        numpy arrays and lists, but raises TypeError if value can not
+        be cast to a scalar.
 
-        raises TypeError if value can not be cast using np.asscalar() function
         """
-        vv = asscalar(value)
+        try:
+            scalar = asscalar(value)
+        except ValueError as e:
+            raise TypeError(e)
+
+        super(Parameter,self).check_type(scalar)
 
     # Comparison Methods
     def __eq__(self, x):        return self.__value__ == x
@@ -422,6 +431,7 @@ class Parameter(Property):
         and otherwise this will either be the symmetric error, 
         or the average of the low,high asymmetric errors.
         """
+        #ADW: Should this be `np.nan`?
         if self.__errors__ is None:
             return 0.
         if np.isscalar(self.__errors__):
