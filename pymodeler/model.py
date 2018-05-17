@@ -3,8 +3,8 @@
 A Model object is just a container for a set of Parameter.
 Implements __getattr__ and __setattr__.
 
-The model has a set of default parameters stored in Model._params.
-Careful, if these are changed, they will be changed for all
+The model has a set of default parameters stored in Model._params. 
+Careful, if these are changed, they will be changed for all 
 subsequent instances of the Model.
 
 The parameters for a given instance of a model are stored in the
