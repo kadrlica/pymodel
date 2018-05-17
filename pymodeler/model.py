@@ -169,7 +169,7 @@ class Model(object):
         """
         try:
             ret = '{0:>{2}}{1}'.format('', self.name, indent)
-        except KeyError:
+        except AttributeError:
             ret = "%s" % (type(self))
         if not self.params:
             pass
