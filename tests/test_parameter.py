@@ -34,9 +34,6 @@ def test_property():
     except TypeError: pass
     else: raise TypeError
 
-    # Check that yaml works
-    dict_prop.dump()
-
     # This should be ok
     Property(value={'x':3},default=['y',2])
 
@@ -94,6 +91,9 @@ def test_parameter():
 
     print(param)
     print(repr(param))
+
+    # Check that yaml works
+    print(param.dump())
 
     # Boolean parameter
     param = Parameter(value=False,dtype=bool)
