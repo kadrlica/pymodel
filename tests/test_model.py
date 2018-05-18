@@ -26,40 +26,31 @@ class test_class(Model):
  
 
 
-if __name__ == "__main__":
-    import argparse
-    description = __doc__
-    parser = argparse.ArgumentParser(description=description)
-    args = parser.parse_args()
+def test_model():
 
     a = Parent()
-    print(a)
 
     a.x = 3
     a.y = 4
-    print(a)
 
     b = Child()
-    print(b)
     for k,v in a.params.items():
         b.setp(k,v)
     b.z = 100
-    print(b)
-
     
     t = test_class(req=2.,var=2.)
     
     check = t.der
-    assert(check==4.)
+    assert check==4.
 
     t.req = 4.
     check = t.der
-    assert(check==8.)
+    assert check==8.
     
     try:
         t2 = test_class(var=2.)
         check = t.der
-        assert(False)
-    except (ValueError):
+        assert False
+    except ValueError:
         pass
 
