@@ -34,7 +34,8 @@ def test_property():
     except TypeError: pass
     else: raise TypeError
 
-    print(yaml.dump(dict_prop))
+    # Check that yaml works
+    dict_prop.dump()
 
     # This should be ok
     Property(value={'x':3},default=['y',2])
