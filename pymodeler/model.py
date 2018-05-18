@@ -259,7 +259,7 @@ class Model(object):
             except AttributeError:
                 try:
                     self.getp(name)
-                except AttributeError:
+                except KeyError:
                     print ("Warning: %s does not have attribute %s" %
                            (type(self), name))
             # Set attributes
