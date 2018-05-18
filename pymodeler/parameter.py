@@ -495,7 +495,7 @@ class Parameter(Property):
         return self.__value__ != 0
 
     def __bool__(self):
-        return self.__nonzero__()
+        return self.__value__.__bool__()
 
     def __int__(self):
         return self.__value__.__int__()
