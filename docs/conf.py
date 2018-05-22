@@ -12,9 +12,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../../pymodeler'))
+import pymodeler
 
 
 # -- Project information -----------------------------------------------------
@@ -24,9 +26,9 @@ copyright = u'2018, Alex Drlica-Wagner, Eric Charles'
 author = u'Alex Drlica-Wagner, Eric Charles'
 
 # The short X.Y version
-version = u''
+version = pymodeler.__version__
 # The full version, including alpha/beta/rc tags
-release = u'0.1'
+release = pymodeler.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -78,10 +80,17 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output -------------------------------------------------
 
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+if not on_rtd:  # only import and set the theme if we're building docs locally
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+#
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -93,6 +102,10 @@ html_theme = 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+def setup(app):
+    app.add_stylesheet("theme_overrides.css")
+
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
