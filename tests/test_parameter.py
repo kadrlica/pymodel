@@ -5,6 +5,7 @@ Test the parameters
 
 from pymodeler import Parameter, Param, Property, Derived
 from collections import OrderedDict as odict
+import yaml
 
 def test_property():
     int_prop = Property(default=10,dtype=int,help="I'm an `int` property")
@@ -14,7 +15,7 @@ def test_property():
     try: int_prop.set_value(3.2)
     except TypeError: pass
     else: raise TypeError
-        
+
     float_prop = Property(value=1.3e6, help="I'm a float parameter")
     float_prop.set(value=0)
     float_prop.clear_value()
@@ -40,6 +41,7 @@ def test_property():
     try: Property(value={'x':3},default=['y',2], dtype=dict)
     except TypeError: pass
     else: raise TypeError
+
 
 def test_derived():
     prop = Property(value='hello',help="Base property")
@@ -89,6 +91,19 @@ def test_parameter():
 
     print(param)
     print(repr(param))
+
+    # Check that yaml works
+    print(param.dump())
+
+    # Boolean parameter
+    param = Parameter(value=False,dtype=bool)
+    if param: raise TypeError
+    param.set_value(True)
+
+    ## For right now we can only set with bools
+    try: param.set_value(1)
+    except TypeError: pass
+    else: raise AssertionError("Only boolean types should be allowed")
 
 
 if __name__ == "__main__":
