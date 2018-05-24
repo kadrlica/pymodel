@@ -2,25 +2,6 @@
 
 pymodeler package
 =================
-
-
-pymodeler.parameter module
---------------------------
-
-.. automodule:: pymodeler.parameter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pymodeler.model module
-----------------------
-
-.. automodule:: pymodeler.model
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
        
 Module contents
 ---------------
@@ -29,3 +10,39 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+class Model
+-----------
+
+.. autoclass:: Model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+  
+class Property
+--------------
+
+.. autoclass:: Property
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+class Parameter
+---------------
+
+.. autoclass:: Parameter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+class Derived 
+-------------
+
+.. autoclass:: Derived
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
