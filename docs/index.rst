@@ -14,6 +14,7 @@ Welcome to pymodeler's documentation!
    install
    quickstart
    pymodeler
+   changelog
 
 
 Indices and tables

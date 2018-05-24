@@ -36,92 +36,88 @@ class Model(object):
     _params and _mapping static data members to define the
     parameters and mappings they want.
 
-    Notes
-    -----
+    Examples::
 
-    class ModelExample:
-    # Define the parameters for this class
-    _params = odict([('fuel_rate',Property(default=10.,dtype=float,units="km/l")),
-        ('fuel_type',Property(default="diesel",dtype=str)),
-        ('distance',Parameter(default=10.,units="km")),
-        ('fuel_needed',Derived(units="l"))])
+        class ModelExample:
+        # Define the parameters for this class
+        _params = odict([('fuel_rate',Property(default=10.,dtype=float,units="km/l")),
+                         ('fuel_type',Property(default="diesel",dtype=str)),
+                         ('distance',Parameter(default=10.,units="km")),
+                         ('fuel_needed',Derived(units="l"))])
                            
-        # Define mappings for this class
-        _mapping = odict([("dist","distance"),
-                          ("rate","fuel_rate")])
+            # Define mappings for this class
+            _mapping = odict([("dist","distance"),
+                              ("rate","fuel_rate")])
 
-        # Define the loader function for the fuel_needed Derived property
-        def _fuel_needed(self):
-            return self.distance / self.fuel_rate
+            # Define the loader function for the fuel_needed Derived property
+            def _fuel_needed(self):
+                return self.distance / self.fuel_rate
 
-    Interface aspects:
+        Construction:
 
-    Construction:
+        Default, all Properties take their default values:
+        m = ModelExample()
 
-    Default, all Properties take their default values:
-    $ m = ModelExample()
+        Setting Properties:
+        m = ModelExample(fuel_rate=7, distance=12.)
 
-    Setting Properties:
-    $ m = ModelExample(fuel_rate=7, distance=12.)
+        Setting Properties using the Mapping:
+        m = ModelExample(rate=7, dist=12.)
 
-    Setting Properties using the Mapping:
-    $ m = ModelExample(rate=7, dist=12.)
+        Setting Paramter errors / bounds:
+        m = ModelExample(distance = dict(value=12,errors=[1.,1.],bounds=[7.,15.]))
 
-    Setting Paramter errors / bounds:
-    $ m = ModelExample(distance = dict(value=12,errors=[1.,1.],bounds=[7.,15.]))
+        Access to properties:
+        Get the value of a Property, Parameter or Derived Parameter:
+        m.fuel_rate
+        m.distance
+        m.fuel_neded
+        m.dist                      # Uses the mapping
 
-    Access to properties:
+        Get access to a Property, e.g.,to know something about it besides the value,
+        note that this can also be used to modify the attributes of the properties:
+        m.getp('fuel_rate').dtype
+        m.getp('distance').errors
 
-    Get the value of a Property, Parameter or Derived Parameter:
-    $ m.fuel_rate
-    $ m.distance
-    $ m.fuel_neded
-    $ m.dist                      # Uses the mapping
+        Get acess to only the Parameter type properties
+        m.get_params()             # Get all of the Parameters
+        m.get_params(paramNames)   # Get a subset of the Parameters, by name
 
-    Get access to a Property, e.g.,to know something about it besides the value,
-    note that this can also be used to modify the attributes of the properties:
-    $ m.getp('fuel_rate').dtype
-    $ m.getp('distance').errors
+        Setting Properties or Paramaters:
 
-    Get acess to only the Parameter type properties
-    $ m.get_params()             # Get all of the Parameters
-    $ m.get_params(paramNames)   # Get a subset of the Parameters, by name
+        Set the value of a Property or Parameter:
+        m.fuel_rate = 8.
+        m.fuel_rate = "xx"          # This will throw a TypeError
+        m.fuel_type = "gasoline"
+        m.distance = 10.
+        m.dist = 10.                # Uses the mapping
 
-    Setting Properties or Paramaters:
+        Set the attributes of a Property:
+        m.setp('fuel_rate',value=7.)    # equivalent to m.fuel_rate = 7.
+        m.setp('fuel_rate',value="xx")  # This will throw a TypeError
+        m.setp('distance',value=12,errors=[1.,1.],bounds=[7.,15.])
 
-    Set the value of a Property or Parameter:
-    $ m.fuel_rate = 8.
-    $ m.fuel_rate = "xx"          # This will throw a TypeError
-    $ m.fuel_type = "gasoline"
-    $ m.distance = 10.
-    $ m.dist = 10.                # Uses the mapping
+        Set all the Properties using a dictionary or mapping
+        m.set_attributes(``**kwargs``)
 
-    Set the attributes of a Property:
-    $ m.setp('fuel_rate',value=7.)    # equivalent to m.fuel_rate = 7.
-    $ m.setp('fuel_rate',value="xx")  # This will throw a TypeError
-    $ m.setp('distance',value=12,errors=[1.,1.],bounds=[7.,15.])
+        Clear all of the Derived properties (to force recomputation)
+        m.clear_derived()
 
-    Set all the Properties using a dictionary or mapping
-    $ m.set_attributes(``**kwargs``)
+        Output:
 
-    Clear all of the Derived properties (to force recomputation)
-    $ m.clear_derived()
+        Convert to an ~collections.OrderedDict
+        m.todict()
 
-    Output:
+        Convert to a yaml string:
+        m.dump()
 
-    Convert to an ~collections.OrderedDict
-    $ m.todict()
+        Access the values of all the Parameter objects:
+        m.param_values()            # Get all the parameter values
+        m.param_values(paramNames)  # Get a subset of the parameter values, by name
 
-    Convert to a yaml string:
-    $ m.dump()
-
-    Access the values of all the Parameter objects:
-    $ m.param_values()            # Get all the parameter values
-    $ m.param_values(paramNames)  # Get a subset of the parameter values, by name
-
-    Access the errors of all the Parameter objects:
-    $ m.param_errors()            # Get all the parameter values
-    $ m.param_errors(paramNames)  # Get a subset of the parameter values, by name
+        Access the errors of all the Parameter objects:
+        m.param_errors()            # Get all the parameter values
+        m.param_errors(paramNames)  # Get a subset of the parameter values, by name
 
     """
 
