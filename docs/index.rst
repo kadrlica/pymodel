@@ -12,7 +12,6 @@ Welcome to pymodeler's documentation!
    :caption: Contents:
 
    install
-   quickstart
    pymodeler
    changelog
 

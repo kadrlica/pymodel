@@ -9,14 +9,12 @@ Installing with pip
 -------------------
 
 These instructions cover installation with the ``pip`` package
-management tool.  This will install fermipy and its dependencies into
+management tool.  This will install pymodeler and its dependencies into
 your python distribution.
 
 Before starting the installation process, you will need to determine
 whether you have setuptools and pip installed in your local python
-environment.  You may need to install these packages if you are
-running with the binary version of the Fermi Science Tools distributed
-by the FSSC.  The following command will install both packages in your
+environment.  The following command will install both packages in your
 local environment:
 
 .. code-block:: bash
@@ -30,7 +28,7 @@ Check if pip is correctly installed:
    $ which pip
 
 Once again, if this isn't the pip in your python environment something went wrong.
-Now install fermipy by running:
+Now install pymodeler by running:
 
 .. code-block:: bash
 
@@ -46,7 +44,7 @@ jupyter notebook:
 .. Running pip and setup.py with the ``user`` flag is recommended if you do not
 .. have write access to your python installation (for instance if you are
 .. running in a UNIX/Linux environment with a shared python
-.. installation).  To install fermipy into the common package directory
+.. installation).  To install pymodeler into the common package directory
 .. of your python installation the ``user`` flag should be ommitted.
 
 Finally, check that pymodeler imports:
@@ -62,11 +60,11 @@ Finally, check that pymodeler imports:
 
 
 The instructions describe how to install development versions of
-Fermipy.  Before installing a development version we recommend first
+Pymodeler.  Before installing a development version we recommend first
 installing a tagged release following the :ref:`pipinstall` 
 instructions above.
 
-The development version of Fermipy can be installed by running ``pip
+The development version of Pymodeler can be installed by running ``pip
 install`` with the URL of the git repository:
 
 .. code-block:: bash
@@ -82,61 +80,48 @@ versions without notice.
 Upgrading
 ---------
 
-By default installing fermipy with ``pip`` or ``conda`` will get the latest tagged
+By default installing pymodeler with ``pip`` will get the latest tagged
 released available on the `PyPi <https://pypi.python.org/pypi>`_
 package respository.  You can check your currently installed version
-of fermipy with ``pip show``:
+of pymodeler with ``pip show``:
 
 .. code-block:: bash
 
-   $ pip show fermipy
-
-or ``conda info``:
-
-.. code-block:: bash
-
-   $ conda info fermipy
+   $ pip show pymodeler
    
-To upgrade your fermipy installation to the latest version run the pip
+To upgrade your pymodeler installation to the latest version run the pip
 installation command with ``--upgrade --no-deps`` (remember to also
 include the ``--user`` option if you're running at SLAC):
    
 .. code-block:: bash
    
-   $ pip install fermipy --upgrade --no-deps
-   Collecting fermipy
-   Installing collected packages: fermipy
-     Found existing installation: fermipy 0.6.6
-       Uninstalling fermipy-0.6.6:
-         Successfully uninstalled fermipy-0.6.6
-   Successfully installed fermipy-0.6.7
+   $ pip install pymodeler --upgrade --no-deps
+   Collecting pymodeler
+   Installing collected packages: pymodeler
+     Found existing installation: pymodeler 0.1.0
+       Uninstalling pymodeler-0.1.0:
+         Successfully uninstalled pymodeler-0.1.0
+   Successfully installed pymodeler-0.1.1
 
-If you installed fermipy with ``conda`` the equivalent command is:
-
-.. code-block:: bash
-
-   $ conda update fermipy
-   
-   
 .. _gitinstall:
    
 Developer Installation
 ----------------------
 
-These instructions describe how to install fermipy from its git source
+These instructions describe how to install pymodeler from its git source
 code repository using the ``setup.py`` script.  Installing from source
 can be useful if you want to make your own modifications to the
-fermipy source code.  Note that non-developers are recommended to
-install a tagged release of fermipy following the :ref:`pipinstall` or
+pymodeler source code.  Note that non-developers are recommended to
+install a tagged release of pymodeler following the :ref:`pipinstall` or
 instructions above.
 
-First clone the fermipy git repository and cd to the root directory of
+First clone the pymodeler git repository and cd to the root directory of
 the repository:
 
 .. code-block:: bash
 
-   $ git clone https://github.com/fermiPy/fermipy.git
-   $ cd fermipy
+   $ git clone https://github.com/kadrlica/pymodeler.git
+   $ cd pymodeler
    
 To install the latest commit in the master branch run ``setup.py
 install`` from the root directory:
@@ -152,7 +137,7 @@ your working copy of the package.  This will create an installation in
 your python distribution that is linked to the copy of the code in
 your local repository.  This allows you to run with any local
 modifications without having to reinstall the package each time you
-make a change.  To install your working copy of fermipy run with the
+make a change.  To install your working copy of pymodeler run with the
 ``develop`` argument:
 
 .. code-block:: bash
@@ -183,24 +168,6 @@ To see the list of available release tags run ``git tag``.
 Issues
 ------
 
-If you get an error about importing matplotlib (specifically something
-about the macosx backend) you might change your default backend to get
-it working.  The `customizing matplotlib page
-<http://matplotlib.org/users/customizing.html>`_ details the
-instructions to modify your default matplotlibrc file (you can pick
-GTK or WX as an alternative).  Specifically the ``TkAgg`` and
-``macosx`` backends currently do not work on OSX if you upgrade
-matplotlib to the version required by fermipy.  To get around this
-issue you can switch to the ``Agg`` backend at runtime before
-importing fermipy:
-
-.. code-block:: bash
-
-   >>> import matplotlib
-   >>> matplotlib.use('Agg')
-
-However note that this backend does not support interactive plotting.
-
 If you are running OSX El Capitan or newer you may see errors like the following:
 
 .. code-block:: bash
@@ -212,10 +179,3 @@ In this case you will need to disable the System Integrity Protections
 <http://www.macworld.com/article/2986118/security/how-to-modify-system-integrity-protection-in-el-capitan.html>`_
 for instructions on disabling SIP on your machine.
 
-In some cases the setup.py script will fail to properly install the
-fermipy package dependecies.  If installation fails you can try
-running a forced upgrade of these packages with ``pip install --upgrade``:
-
-.. code-block:: bash
-
-   $ pip install --upgrade --user ipython jupyter
