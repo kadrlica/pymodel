@@ -80,6 +80,7 @@ versions without notice.
 Upgrading
 ---------
 
+
 By default installing pymodeler with ``pip`` will get the latest tagged
 released available on the `PyPi <https://pypi.python.org/pypi>`_
 package respository.  You can check your currently installed version
@@ -89,7 +90,7 @@ of pymodeler with ``pip show``:
 
    $ pip show pymodeler
    
-To upgrade your pymodeler installation to the latest version run the pip
+To upgrade your pymodeler installation to the latest version run the
 installation command with ``--upgrade --no-deps`` (remember to also
 include the ``--user`` option if you're running at SLAC):
    
