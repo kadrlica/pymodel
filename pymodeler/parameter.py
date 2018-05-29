@@ -67,7 +67,6 @@ def defaults_docstring(defaults, header=None, indent=None, footer=None):
         s += ' [%s]\n\n' % str(value)
     s += hbar
     s += footer
-    print (s)
     return s
 
 
