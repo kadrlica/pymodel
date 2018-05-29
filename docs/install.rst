@@ -34,13 +34,6 @@ Now install pymodeler by running:
 
    $ pip install pymodeler
 
-To run the ipython notebook examples you will also need to install
-jupyter notebook:
-   
-.. code-block:: bash
-
-   $ pip install jupyter
-
 .. Running pip and setup.py with the ``user`` flag is recommended if you do not
 .. have write access to your python installation (for instance if you are
 .. running in a UNIX/Linux environment with a shared python

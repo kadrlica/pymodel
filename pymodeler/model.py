@@ -181,7 +181,10 @@ class Model(object):
 
     @property
     def mappings(self):
-        """Ordered dictionary of mapping."""
+        """Ordered dictionary of mapping of names.
+
+        This can be used to assign multiple names to a single parameter
+        """
         return copy.deepcopy(self._mapping)
 
     #@property
@@ -190,17 +193,18 @@ class Model(object):
 
     def getp(self, name):
         """
-        Get the named parameter.
+        Get the named `Property`.
 
         Parameters
         ----------
-        name : string
-            The parameter name.
+        name : str
+            The property name.
 
         Returns
         -------
-        param :
+        param : `Property`
             The parameter object.
+
         """
         name = self._mapping.get(name, name)
         return self.params[name]
@@ -212,15 +216,20 @@ class Model(object):
 
         Parameters
         ----------
-        name : string
+
+        name : str
             The parameter name.
+        clear_derived : bool
+            Flag to clear derived objects in this model
         value:
-            The value of the parameter
-        bounds: None
-            The bounds on the parameter
-        Returns
-        -------
-        None
+            The value of the parameter, if None, it is not changed
+        bounds: tuple or None
+            The bounds on the parameter, if None, they are not set
+        free : bool or None
+            Flag to say if parameter is fixed or free in fitting, if None, it is not changed
+        errors : tuple or None
+            Uncertainties on the parameter, if None, they are not changed
+
         """
         name = self._mapping.get(name, name)
         try:
@@ -294,14 +303,18 @@ class Model(object):
 
         Parameters
         ----------
-        pname : list of string or none
-           If a list of strings, get the Parameter objects with those names
+
+        pname : list or None
+           If a list get the Parameter objects with those names
 
            If none, get all the Parameter objects
 
         Returns
         -------
-        list of Parameters
+
+        params : list
+            list of Parameters
+
         """
         l = []
         if pnames is None:
@@ -317,14 +330,18 @@ class Model(object):
 
         Parameters
         ----------
-        pname : list of string or none
-           If a list of strings, get the Parameter objects with those names
 
-           If none, get all the Parameter objects
+        pname : list or None
+           If a list, get the values of the `Parameter` objects with those names
+
+           If none, get all values of all the `Parameter` objects
 
         Returns
         -------
-        ~numpy.array of parameter values
+
+        values : `np.array`
+            Parameter values
+
         """
         l = self.get_params(pnames)
         v = [p.value for p in l]
