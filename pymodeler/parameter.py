@@ -41,19 +41,21 @@ def asscalar(a):
         return np.asarray(a).item()
 
 
-def defaults_docstring(defaults, header=None, indent=None):
+def defaults_docstring(defaults, header=None, indent=None, footer=None):
     """Return a docstring from a list of defaults.
     """
     if indent is None:
         indent = ''
     if header is None:
         header = ''
+    if footer is None:
+        footer = ''
 
     width = 60
     #hbar = indent + width * '=' + '\n'  # horizontal bar
     hbar = '\n'
 
-    s = hbar + (indent + header + '\n') + hbar
+    s = hbar + (header + '\n') + hbar
     for key, value, desc in defaults:
         if isinstance(value, basestring):
             value = "'" + value + "'"
@@ -68,6 +70,7 @@ def defaults_docstring(defaults, header=None, indent=None):
             s += '\n' + indent + 23 * ' '
         s += ' ' + (indent + 23 * ' ').join(desc.split('\n')) + '\n'
     s += hbar
+    s += footer
     return s
 
 
@@ -77,7 +80,9 @@ def defaults_decorator(defaults):
     def decorator(func):
         """Function that appends default kwargs to a function.
         """
-        kwargs = dict(header='keywords arguments', indent='\t')
+        kwargs = dict(header='Keyword arguments\n-----------------\n\n', 
+                      indent='\t',
+                      footer='\n')
         doc = defaults_docstring(defaults, **kwargs)
         if func.__doc__ is None:
             func.__doc__ = ''
@@ -96,7 +101,9 @@ class Meta(type):
 
     @property
     def __doc__(cls):
-        kwargs = dict(header='Default Attributes', indent='\t')
+        kwargs = dict(header='Parameters\n----------\n\n', 
+                      indent='\t',
+                      footer='\n')
         return cls._doc + cls.defaults_docstring(**kwargs)
 
 
@@ -163,9 +170,10 @@ class Property(object):
         self.set(**defaults)
 
     @classmethod
-    def defaults_docstring(cls, header=None, indent=None):
+    def defaults_docstring(cls, header=None, indent=None, footer=None):
         """Add the default values to the class docstring"""
-        return defaults_docstring(cls.defaults, header=header, indent=indent)
+        return defaults_docstring(cls.defaults, header=header,
+                                  indent=indent, footer=footer)
 
     @property
     def value(self):
