@@ -106,7 +106,35 @@ def test_parameter():
     else: raise AssertionError("Only boolean types should be allowed")
 
 
+def test_parameter_operators():
+    # Simple parameter
+    param = Parameter(value=10)
+    assert param.value == 10
+    assert param != 9
+    assert param > 9
+    assert param < 11
+    assert param >= 10
+    assert param <= 11
+    
+    assert 1 + param == 11
+    assert param + 1 == 11
+    assert 11 - param == 1
+    assert param - 1 == 9
+
+    assert param * 2 == 20
+    assert param / 2 == 5    
+    assert param % 2 == 0
+    assert param ** 2 == 100
+    
+    assert 2 * param == 20
+
+    
+    
+
+
+
 if __name__ == "__main__":
     test_property()
     test_derived()
     test_parameter()
+    test_parameter_operators()
