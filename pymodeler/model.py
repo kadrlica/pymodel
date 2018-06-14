@@ -143,7 +143,15 @@ class Model(object):
         """
         # Return 'getp' of parameter
         if name in self._params or name in self._mapping:
-            return self.getp(name).value
+            try:
+                return self.getp(name).value
+            except AttributeError as msg:
+                msg += " for %s" % name
+                raise AttributeError(msg)
+            except TypeError as msg:
+                msg += " for %s" % name
+                raise TypeError(msg)
+                
         # Raises AttributeError
         return object.__getattribute__(self, name)
 
