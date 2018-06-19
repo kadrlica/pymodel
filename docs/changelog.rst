@@ -7,7 +7,14 @@ This page is a changelog for releases of pymodeler.  You can also browse
 releases on `Github <https://github.com/kadrlica/pymodeler/yreleases>`_.
 
 
-0.1.1 (3/22/2018)
+0.1.3 (3/30/2018)
+-----------------
+
+This patch release cleans up the documentation to make improve the readthedocs pages.
+This includes adding more sphinx documentation and reformatting some docstrings.
+
+
+0.1.2 (3/22/2018)
 -----------------
 
 Added __bool__ to Parameter

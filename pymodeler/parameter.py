@@ -299,16 +299,20 @@ class Derived(Property):
         """
 
         if self.__value__ is None:
-            try:
-                val = self.__dict__['loader']()
-            except TypeError:
-                msg = "Loader is not defined"
-                raise TypeError(msg)
+            try: 
+                loader = self.__dict__['loader']
+            except KeyError:
+                raise AttributeError("Loader is not defined")
+
+            # Try to run the loader.
+            # Don't catch expections here, let the Model class figure it out
+            val = loader()
+
+            # Try to set the value
             try:
                 self.set_value(val)
             except TypeError:
-                msg = "Loader must return variable of type %s or None" % (
-                    self.__dict__['dtype'])
+                msg = "Loader must return variable of type %s or None, got %s" % (self.__dict__['dtype'], type(val))
                 raise TypeError(msg)
         return self.__value__
 
