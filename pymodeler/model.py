@@ -145,10 +145,12 @@ class Model(object):
         if name in self._params or name in self._mapping:
             try:
                 return self.getp(name).value
-            except AttributeError as msg:
+            except AttributeError as err:
+                msg = str(err)
                 msg += " for %s" % name
                 raise AttributeError(msg)
-            except TypeError as msg:
+            except TypeError as err:
+                msg = str(err)
                 msg += " for %s" % name
                 raise TypeError(msg)
                 
@@ -264,13 +266,10 @@ class Model(object):
         for name, value in kwargs.items():
             # Raise AttributeError if param not found
             try:
-                self.__getattr__(name)
-            except AttributeError:
-                try:
-                    self.getp(name)
-                except KeyError:
-                    print ("Warning: %s does not have attribute %s" %
-                           (type(self), name))
+                self.getp(name)
+            except KeyError:
+                print ("Warning: %s does not have attribute %s" %
+                       (type(self), name))
             # Set attributes
             try:
                 self.setp(name, clear_derived=False, **value)
