@@ -6,6 +6,12 @@ Changelog
 This page is a changelog for releases of pymodeler.  You can also browse
 releases on `Github <https://github.com/kadrlica/pymodeler/yreleases>`_.
 
+0.1.4 (9/03/2020)
+-----------------
+
+This patch release modifies a couple of thrown expections to make it easier to 
+debug cases where bad input are given in the configuration files.
+
 
 0.1.3 (3/30/2018)
 -----------------
