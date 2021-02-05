@@ -1,0 +1,10 @@
+# .coveragerc to control coverage.py
+[run]
+omit=
+  *pymodeler/_version.py
+  *pymodeler/version.py
+
+
+[html]
+directory = cover
+

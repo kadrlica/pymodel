@@ -8,6 +8,8 @@ build/
 dist/
 *.egg-info/
 .pytest_cache
+cover/
+.coverage
 
 ### docs
 _build/
