@@ -315,7 +315,7 @@ class Derived(Property):
             except KeyError as err: #pragma: no cover
                 if PYTHON_VERSION == 2:
                     raise AttributeError("Loader is not defined") #pylint: disable=raise-missing-from
-                raise AttributeError("Loader is not defined") from err
+                raise AttributeError("Loader is not defined") from err #pylint: disable=invalid-syntax
 
             # Try to run the loader.
             # Don't catch expections here, let the Model class figure it out

@@ -156,7 +156,7 @@ class Model:
         except KeyError as msg:
             if PYTHON_VERSION == 2:
                 raise AttributeError  #pylint: disable=raise-missing-from
-            raise AttributeError from msg
+            raise AttributeError from msg #pylint: disable=invalid-syntax
 
     def __setattr__(self, name, value):
         """ Assignement operator, i.e., m.name = x
