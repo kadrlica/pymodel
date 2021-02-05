@@ -245,7 +245,7 @@ class Model:
         try:
             self.params[name].set(**kwcopy)
         except TypeError as msg:
-            raise TypeError("Failed to set parameter %s" % name) from msg
+            raise TypeError("Failed to set parameter %s: %s" % (name, msg)) #pylint: disable=disable=raise-missing-from
 
         if clear_derived:
             self.clear_derived()

@@ -322,7 +322,7 @@ class Derived(Property):
                 self.set_value(val)
             except TypeError as err:
                 msg = "Loader must return variable of type %s or None, got %s" % (self.__dict__['dtype'], type(val))
-                raise TypeError(msg) from err
+                raise TypeError("%s: %" %(msg, err)) #pylint: disable=disable=raise-missing-from
         return self.__value__
 
 
@@ -364,7 +364,7 @@ class Parameter(Property):
         try:
             scalar = asscalar(value)
         except ValueError as e:
-            raise TypeError(e) from e
+            raise TypeError(e) #pylint: disable=disable=raise-missing-from
 
         super(Parameter, self).check_type(scalar)
 
