@@ -311,7 +311,7 @@ class Derived(Property):
             try:
                 loader = self.__dict__['loader']
             except KeyError as err: #pragma: no cover
-                raise AttributeError("Loader is not defined") #pylint: disable=raise-missing-from
+                raise AttributeError("Loader is not defined")
 
             # Try to run the loader.
             # Don't catch expections here, let the Model class figure it out
@@ -322,7 +322,7 @@ class Derived(Property):
                 self.set_value(val)
             except TypeError as err:
                 msg = "Loader must return variable of type %s or None, got %s" % (self.__dict__['dtype'], type(val))
-                raise TypeError("%s: %s" %(msg, err)) #pylint: disable=raise-missing-from
+                raise TypeError("%s: %s" %(msg, err))
         return self.__value__
 
 
