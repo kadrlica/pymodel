@@ -24,8 +24,6 @@ import yaml
 
 from pymodeler.parameter import Derived, Parameter
 
-# Python 3 compatibility
-PYTHON_VERSION = sys.version_info[0]
 
 
 def _indent(string, width=0): #pragma: no cover
@@ -154,9 +152,7 @@ class Model:
         try:
             return self.__dict__[name]
         except KeyError as msg:
-            if PYTHON_VERSION == 2:
-                raise AttributeError  #pylint: disable=raise-missing-from
-            raise AttributeError from msg #pylint: disable=invalid-syntax
+            raise AttributeError(msg)  #pylint: disable=raise-missing-from
 
     def __setattr__(self, name, value):
         """ Assignement operator, i.e., m.name = x

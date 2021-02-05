@@ -22,8 +22,6 @@ from collections import OrderedDict as odict
 import numpy as np
 import yaml
 
-# Python 3 compatibility
-PYTHON_VERSION = sys.version_info[0]
 try:
     basestring
 except NameError:
@@ -313,9 +311,7 @@ class Derived(Property):
             try:
                 loader = self.__dict__['loader']
             except KeyError as err: #pragma: no cover
-                if PYTHON_VERSION == 2:
-                    raise AttributeError("Loader is not defined") #pylint: disable=raise-missing-from
-                raise AttributeError("Loader is not defined") from err #pylint: disable=invalid-syntax
+                raise AttributeError("Loader is not defined") #pylint: disable=raise-missing-from
 
             # Try to run the loader.
             # Don't catch expections here, let the Model class figure it out
