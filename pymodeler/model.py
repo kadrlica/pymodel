@@ -14,6 +14,8 @@ Model._params created during instantiation.
 """
 from __future__ import absolute_import, division, print_function
 
+import sys
+
 import copy
 from collections import OrderedDict as odict
 
@@ -21,6 +23,9 @@ import numpy as np
 import yaml
 
 from pymodeler.parameter import Derived, Parameter
+
+# Python 3 compatibility
+PYTHON_VERSION = sys.version_info[0]
 
 
 def _indent(string, width=0): #pragma: no cover
@@ -149,6 +154,8 @@ class Model:
         try:
             return self.__dict__[name]
         except KeyError as msg:
+            if PYTHON_VERSION == 2:
+                raise AttributeError  #pylint: disable=raise-missing-from
             raise AttributeError from msg
 
     def __setattr__(self, name, value):

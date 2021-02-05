@@ -13,6 +13,8 @@ from other model properties.
 """
 from __future__ import absolute_import, division, print_function
 
+import sys
+
 from copy import deepcopy
 from numbers import Number
 from collections import OrderedDict as odict
@@ -21,6 +23,7 @@ import numpy as np
 import yaml
 
 # Python 3 compatibility
+PYTHON_VERSION = sys.version_info[0]
 try:
     basestring
 except NameError:
@@ -28,6 +31,7 @@ except NameError:
 
 
 def is_none(val):
+    """Check for none as string"""
     return val in [None, 'none', 'None']
 
 
@@ -309,6 +313,8 @@ class Derived(Property):
             try:
                 loader = self.__dict__['loader']
             except KeyError as err: #pragma: no cover
+                if PYTHON_VERSION == 2:
+                    raise AttributeError("Loader is not defined") #pylint: disable=raise-missing-from
                 raise AttributeError("Loader is not defined") from err
 
             # Try to run the loader.
@@ -392,10 +398,14 @@ class Parameter(Property):
     # Unary Ops
 
     def __pos__(self):
-        return +self.__value__
+        if self.__value__ is None:
+            return None
+        return +self.__value__  #pylint: disable=invalid-unary-operand-type
 
     def __neg__(self):
-        return -self.__value__
+        if self.__value__ is None:
+            return None
+        return -self.__value__ #pylint: disable=invalid-unary-operand-type
 
     def __abs__(self):
         return abs(self.__value__)
@@ -403,7 +413,9 @@ class Parameter(Property):
     # Bitwise Unary Ops
 
     def __invert__(self):
-        return ~self.__value__
+        if self.__value__ is None:
+            return None
+        return ~self.__value__ #pylint: disable=invalid-unary-operand-type
 
     # Arithmetic Binary Ops
 
