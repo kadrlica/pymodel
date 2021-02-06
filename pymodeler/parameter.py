@@ -20,11 +20,15 @@ from collections import OrderedDict as odict
 import numpy as np
 import yaml
 
-# Python 3 compatibility
 try:
     basestring
 except NameError:
     basestring = str
+
+
+def is_none(val):
+    """Check for none as string"""
+    return val in [None, 'none', 'None']
 
 
 def asscalar(a):
@@ -51,7 +55,7 @@ def defaults_docstring(defaults, header=None, indent=None, footer=None):
     if footer is None:
         footer = ''
 
-    width = 60
+    #width = 60
     #hbar = indent + width * '=' + '\n'  # horizontal bar
     hbar = '\n'
 
@@ -76,7 +80,7 @@ def defaults_decorator(defaults):
     def decorator(func):
         """Function that appends default kwargs to a function.
         """
-        kwargs = dict(header='Keyword arguments\n-----------------\n', 
+        kwargs = dict(header='Keyword arguments\n-----------------\n',
                       indent='  ',
                       footer='\n')
         doc = defaults_docstring(defaults, **kwargs)
@@ -88,7 +92,7 @@ def defaults_decorator(defaults):
     return decorator
 
 
-class Meta(type):
+class Meta(type): #pragma: no cover
     """Meta class for appending docstring with defaults
     """
     def __new__(mcs, name, bases, attrs):
@@ -97,13 +101,13 @@ class Meta(type):
 
     @property
     def __doc__(cls):
-        kwargs = dict(header='Parameters\n----------\n', 
+        kwargs = dict(header='Parameters\n----------\n',
                       indent='  ',
                       footer='\n')
         return cls._doc + cls.defaults_docstring(**kwargs)
 
 
-class Property(object):
+class Property:
     """Base class for model properties.
 
     This class and its sub-classes implement variations on the concept
@@ -147,7 +151,7 @@ class Property(object):
     def _load(self, **kwargs):
         """Load kwargs key,value pairs into __dict__
         """
-        defaults = dict([(d[0], d[1]) for d in self.defaults])
+        defaults = {d[0]:d[1] for d in self.defaults}
         # Require kwargs are in defaults
         for k in kwargs:
             if k not in defaults:
@@ -212,6 +216,8 @@ class Property(object):
         This invokes hooks for type-checking and bounds-checking that
         may be implemented by sub-classes.
         """
+        if is_none(value):
+            value = None
         self.check_bounds(value)
         self.check_type(value)
         self.__value__ = value
@@ -247,7 +253,8 @@ class Property(object):
 
         Sub-classes can raise an exception for out-of-bounds input values.
         """
-        pass
+        #pylint: disable=unused-argument, no-self-use
+        return
 
     def check_type(self, value):
         """Hook for type-checking, invoked during assignment.
@@ -259,9 +266,9 @@ class Property(object):
         """
         if self.__dict__['dtype'] is None:
             return
-        elif value is None:
+        if is_none(value):
             return
-        elif isinstance(value, self.__dict__['dtype']):
+        if isinstance(value, self.__dict__['dtype']):
             return
         msg = "Value of type %s, when %s was expected." % (
             type(value), self.__dict__['dtype'])
@@ -299,10 +306,10 @@ class Derived(Property):
         """
 
         if self.__value__ is None:
-            try: 
+            try:
                 loader = self.__dict__['loader']
-            except KeyError:
-                raise AttributeError("Loader is not defined")
+            except KeyError as err: #pragma: no cover
+                raise AttributeError("Loader is not defined") from err
 
             # Try to run the loader.
             # Don't catch expections here, let the Model class figure it out
@@ -311,9 +318,9 @@ class Derived(Property):
             # Try to set the value
             try:
                 self.set_value(val)
-            except TypeError:
+            except TypeError as err:
                 msg = "Loader must return variable of type %s or None, got %s" % (self.__dict__['dtype'], type(val))
-                raise TypeError(msg)
+                raise TypeError(msg) from err
         return self.__value__
 
 
@@ -355,7 +362,7 @@ class Parameter(Property):
         try:
             scalar = asscalar(value)
         except ValueError as e:
-            raise TypeError(e)
+            raise TypeError from e
 
         super(Parameter, self).check_type(scalar)
 
@@ -378,16 +385,21 @@ class Parameter(Property):
     def __ge__(self, x):
         return self.__value__ >= x
 
-    def __cmp__(self, x):
+    # python 2 only
+    def __cmp__(self, x): #pragma: no cover
         return 0 if self.__value__ == x else 1 if self.__value__ > 0 else -1
 
     # Unary Ops
 
     def __pos__(self):
-        return +self.__value__
+        if self.__value__ is None:
+            return None
+        return +self.__value__  #pylint: disable=invalid-unary-operand-type
 
     def __neg__(self):
-        return -self.__value__
+        if self.__value__ is None:
+            return None
+        return -self.__value__ #pylint: disable=invalid-unary-operand-type
 
     def __abs__(self):
         return abs(self.__value__)
@@ -395,7 +407,9 @@ class Parameter(Property):
     # Bitwise Unary Ops
 
     def __invert__(self):
-        return ~self.__value__
+        if self.__value__ is None:
+            return None
+        return ~self.__value__ #pylint: disable=invalid-unary-operand-type
 
     # Arithmetic Binary Ops
 
@@ -408,7 +422,8 @@ class Parameter(Property):
     def __mul__(self, x):
         return self.__value__ * x
 
-    def __div__(self, x):
+    # python 2 only
+    def __div__(self, x): #pramga: no cover
         return self.__value__ / x
 
     def __mod__(self, x):
@@ -437,7 +452,8 @@ class Parameter(Property):
     def __rmul__(self, x):
         return x * self.__value__
 
-    def __rdiv__(self, x):
+    # python 2 only
+    def __rdiv__(self, x): #pragma: no cover
         return x / self.__value__
 
     def __rmod__(self, x):
@@ -511,15 +527,18 @@ class Parameter(Property):
     def __float__(self):
         return self.__value__.__float__()
 
-    def __long__(self):
+    # python 2 only
+    def __long__(self): #pragma: no cover
         return self.__value__.__long__()
 
     # Conversions
 
-    def __oct__(self):
+    # python 2 only
+    def __oct__(self): #pragma: no cover
         return self.__value__.__oct__()
 
-    def __hex__(self):
+    # python 2 only
+    def __hex__(self): #pragma: no cover
         return self.__value__.__hex__()
 
     # Random Ops
@@ -530,7 +549,8 @@ class Parameter(Property):
     def __trunc__(self):
         return self.__value__.__trunc__()
 
-    def __coerce__(self, x):
+    # python 2 only
+    def __coerce__(self, x): #pragma: no cover
         return self.__value__.__coerce__(x)
 
     # Represenation
@@ -621,6 +641,9 @@ class Parameter(Property):
         """Set parameter error estimate """
         if errors is None:
             self.__errors__ = None
+            return
+        if np.isscalar(errors):
+            self.__errors__ = errors
             return
         self.__errors__ = [asscalar(e) for e in errors]
 

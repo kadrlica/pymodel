@@ -3,8 +3,8 @@
 A Model object is just a container for a set of Parameter.
 Implements __getattr__ and __setattr__.
 
-The model has a set of default parameters stored in Model._params. 
-Careful, if these are changed, they will be changed for all 
+The model has a set of default parameters stored in Model._params.
+Careful, if these are changed, they will be changed for all
 subsequent instances of the Model.
 
 The parameters for a given instance of a model are stored in the
@@ -23,13 +23,14 @@ import yaml
 from pymodeler.parameter import Derived, Parameter
 
 
-def _indent(string, width=0):
+
+def _indent(string, width=0): #pragma: no cover
     """ Helper function to indent lines in printouts
     """
     return '{0:>{1}}{2}'.format('', width, string)
 
 
-class Model(object):
+class Model:
     """A base class to manage Parameters and Properties
 
     Users should define Model sub-classes and override the
@@ -44,7 +45,7 @@ class Model(object):
                          ('fuel_type',Property(default="diesel",dtype=str)),
                          ('distance',Parameter(default=10.,units="km")),
                          ('fuel_needed',Derived(units="l"))])
-                           
+
             # Define mappings for this class
             _mapping = odict([("dist","distance"),
                               ("rate","fuel_rate")])
@@ -143,19 +144,13 @@ class Model(object):
         """
         # Return 'getp' of parameter
         if name in self._params or name in self._mapping:
-            try:
-                return self.getp(name).value
-            except AttributeError as err:
-                msg = str(err)
-                msg += " for %s" % name
-                raise AttributeError(msg)
-            except TypeError as err:
-                msg = str(err)
-                msg += " for %s" % name
-                raise TypeError(msg)
-                
+            return self.getp(name).value
+
         # Raises AttributeError
-        return object.__getattribute__(self, name)
+        try:
+            return self.__dict__[name]
+        except KeyError as msg:
+            raise AttributeError from msg
 
     def __setattr__(self, name, value):
         """ Assignement operator, i.e., m.name = x
@@ -164,7 +159,7 @@ class Model(object):
         if name in self._params or name in self._mapping:
             self.setp(name, value=value)
         else:
-            object.__setattr__(self, name, value)
+            self.__dict__[name] = value
 
     def __str__(self, indent=0):
         """ Cast model as a formatted string
@@ -173,7 +168,7 @@ class Model(object):
             ret = '{0:>{2}}{1}'.format('', self.name, indent)
         except AttributeError:
             ret = "%s" % (type(self))
-        if not self.params:
+        if not self.params: #pragma: no cover
             pass
         else:
             ret += '\n{0:>{2}}{1}'.format('', 'Parameters:', indent + 2)
@@ -219,16 +214,17 @@ class Model(object):
         name = self._mapping.get(name, name)
         return self.params[name]
 
-    def setp(self, name, clear_derived=True, value=None,
-             bounds=None, free=None, errors=None):
+    def setp(self, name, **kwargs):
         """
         Set the value (and bounds) of the named parameter.
 
         Parameters
         ----------
-
         name : str
             The parameter name.
+
+        Keywords
+        --------
         clear_derived : bool
             Flag to clear derived objects in this model
         value:
@@ -242,14 +238,12 @@ class Model(object):
 
         """
         name = self._mapping.get(name, name)
+        kwcopy = kwargs.copy()
+        clear_derived = kwcopy.pop('clear_derived', True)
         try:
-            self.params[name].set(
-                value=value,
-                bounds=bounds,
-                free=free,
-                errors=errors)
+            self.params[name].set(**kwcopy)
         except TypeError as msg:
-            print(msg, name)
+            raise TypeError("Failed to set parameter %s" % name) from msg
 
         if clear_derived:
             self.clear_derived()
@@ -409,14 +403,5 @@ class Model(object):
         -------
         None
         """
-        pass
-
-
-if __name__ == "__main__":
-
-    import argparse
-    description = "python script"
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('args', nargs=argparse.REMAINDER)
-    opts = parser.parse_args()
-    args = opts.args
+        #pylint: disable=unused-argument, no-self-use
+        return
