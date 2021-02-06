@@ -13,8 +13,6 @@ from other model properties.
 """
 from __future__ import absolute_import, division, print_function
 
-import sys
-
 from copy import deepcopy
 from numbers import Number
 from collections import OrderedDict as odict
@@ -311,7 +309,7 @@ class Derived(Property):
             try:
                 loader = self.__dict__['loader']
             except KeyError as err: #pragma: no cover
-                raise AttributeError("Loader is not defined")
+                raise AttributeError("Loader is not defined") from err
 
             # Try to run the loader.
             # Don't catch expections here, let the Model class figure it out
@@ -322,7 +320,7 @@ class Derived(Property):
                 self.set_value(val)
             except TypeError as err:
                 msg = "Loader must return variable of type %s or None, got %s" % (self.__dict__['dtype'], type(val))
-                raise TypeError("%s: %s" %(msg, err))
+                raise TypeError(msg) from err
         return self.__value__
 
 
@@ -364,7 +362,7 @@ class Parameter(Property):
         try:
             scalar = asscalar(value)
         except ValueError as e:
-            raise TypeError(e)
+            raise TypeError from e
 
         super(Parameter, self).check_type(scalar)
 

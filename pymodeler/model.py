@@ -14,8 +14,6 @@ Model._params created during instantiation.
 """
 from __future__ import absolute_import, division, print_function
 
-import sys
-
 import copy
 from collections import OrderedDict as odict
 
@@ -152,7 +150,7 @@ class Model:
         try:
             return self.__dict__[name]
         except KeyError as msg:
-            raise AttributeError(msg)
+            raise AttributeError from msg
 
     def __setattr__(self, name, value):
         """ Assignement operator, i.e., m.name = x
@@ -245,7 +243,7 @@ class Model:
         try:
             self.params[name].set(**kwcopy)
         except TypeError as msg:
-            raise TypeError("Failed to set parameter %s: %s" % (name, msg))
+            raise TypeError("Failed to set parameter %s" % name) from msg
 
         if clear_derived:
             self.clear_derived()
