@@ -266,13 +266,13 @@ class Model:
                        (type(self), name))
             # Set attributes
             try:
-                self.setp(name, clear_derived=False, **value)
-            except TypeError:
+                self.setp(name, clear_derived=False, value=value)
+            except (TypeError, KeyError):
                 try:
-                    self.setp(name, clear_derived=False, *value)
-                except (TypeError, KeyError):
+                    self.setp(name, clear_derived=False, **value)
+                except TypeError:
                     try:
-                        self.setp(name, clear_derived=False, value=value)
+                        self.setp(name, clear_derived=False, *value)
                     except (TypeError, KeyError):
                         self.__setattr__(name, value)
             # pop this attribued off the list of missing properties
