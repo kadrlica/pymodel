@@ -1,7 +1,7 @@
 PyModeler
 ---------
 
-[![Build](https://img.shields.io/travis/kadrlica/pymodeler.svg)](https://travis-ci.org/kadrlica/pymodeler)
+[![Build](https://github.com/kadrlica/pymodeler/actions/workflows/python-package.yml/badge.svg)](https://github.com/kadrlica/pymodeler/actions/workflows/python-package.yml)
 [![Release](https://img.shields.io/github/release/kadrlica/pymodeler.svg)](../../releases)
 [![PyPI](https://img.shields.io/pypi/v/pymodeler.svg)](https://pypi.python.org/pypi/pymodeler)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kadrlica/pymodeler)
